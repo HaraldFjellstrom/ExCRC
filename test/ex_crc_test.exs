@@ -18,6 +18,12 @@ defmodule ExCRCTest do
   end
 
   # @tag :skip
+  test "crc16ccitt/2 computes the CRC of '12345' and '6789' as 0x29B1" do
+    crc =  ExCRC.crc16ccitt("12345")
+    assert ExCRC.crc16ccitt("6789", crc) == 0x29b1
+  end
+
+  # @tag :skip
   test "crc16ccitt/1 computes the CRC of 'Lammert Bies' as 0x4A31" do
     assert ExCRC.crc16ccitt("Lammert Bies") == 0x4a31
   end
@@ -38,6 +44,12 @@ defmodule ExCRCTest do
   end
 
   # @tag :skip
+  test "crc16kermit/2 computes the CRC of '12345' and '6789' as 0x8921" do
+    crc = ExCRC.crc16kermit("12345")
+    assert ExCRC.crc16kermit("6789", crc) == 0x8921
+  end
+
+  # @tag :skip
   test "crc16kermit/1 computes the CRC of 'Lammert Bies' as 0xF80D" do
     assert ExCRC.crc16kermit("Lammert Bies") == 0xf80d
   end
@@ -55,6 +67,12 @@ defmodule ExCRCTest do
   # @tag :skip
   test "crc16xmodem/1 computes the CRC of '123456789' as 0x31C3" do
     assert ExCRC.crc16xmodem("123456789") == 0x31c3
+  end
+
+  # @tag :skip
+  test "crc16xmodem/2 computes the CRC of '12345' and '6789' as 0x31C3" do
+    crc = ExCRC.crc16xmodem("12345")
+    assert ExCRC.crc16xmodem("6789", crc) == 0x31c3
   end
 
   # @tag :skip

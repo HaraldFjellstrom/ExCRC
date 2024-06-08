@@ -3,7 +3,7 @@ defmodule ExCRC.Generator do
     Functions used to generate the static tables included by this library
   """
 
-  use Bitwise
+  import Bitwise
 
   #
   # Provide `print_crc_table/2` with a map and it will print the
@@ -15,14 +15,14 @@ defmodule ExCRC.Generator do
       table
       |> Enum.to_list()
       |> List.keysort(0)
-      |> Enum.map(fn({k,v}) ->
+      |> Enum.map(fn {k, v} ->
         key = :io_lib.format("~2.16.0b", [k])
         value = :io_lib.format("~4.16.0b", [v])
         "0x#{key} => 0x#{value}"
       end)
       |> Enum.chunk_every(width, width, [])
-      |> Enum.map(fn(row) -> Enum.join(row, ", ") end)
-      |> Enum.map(fn(row) -> "  #{row}," end)
+      |> Enum.map(fn row -> Enum.join(row, ", ") end)
+      |> Enum.map(fn row -> "  #{row}," end)
       |> Enum.join("\n")
 
     trimmed =
@@ -38,16 +38,17 @@ defmodule ExCRC.Generator do
     for i <- 0..255, into: %{} do
       crc = 0
       c = i <<< 8
-      {i, ccitt_entry(c, crc, 0, 0x1021) &&& 0xffff}
+      {i, ccitt_entry(c, crc, 0, 0x1021) &&& 0xFFFF}
     end
   end
 
   # Compute a entry
   defp ccitt_entry(_, crc, 8, _), do: crc
+
   defp ccitt_entry(c, crc, bc, polynom) do
-    case (crc ^^^ c) &&& 0x8000 do
+    case bxor(crc, c) &&& 0x8000 do
       0 -> ccitt_entry(c <<< 1, crc <<< 1, bc + 1, polynom)
-      _ -> ccitt_entry(c <<< 1, (crc <<< 1) ^^^ polynom, bc + 1, polynom)
+      _ -> ccitt_entry(c <<< 1, bxor(crc <<< 1, polynom), bc + 1, polynom)
     end
   end
 
@@ -56,17 +57,17 @@ defmodule ExCRC.Generator do
     for i <- 0..255, into: %{} do
       crc = 0
       c = i
-      {i, kermit_entry(c, crc, 0, 0x8408) &&& 0xffff}
+      {i, kermit_entry(c, crc, 0, 0x8408) &&& 0xFFFF}
     end
   end
 
   # Compute a entry
   defp kermit_entry(_, crc, 8, _), do: crc
+
   defp kermit_entry(c, crc, bc, polynom) do
-    case (crc ^^^ c) &&& 1 do
+    case bxor(crc, c) &&& 1 do
       0 -> kermit_entry(c >>> 1, crc >>> 1, bc + 1, polynom)
-      _ -> kermit_entry(c >>> 1, (crc >>> 1) ^^^ polynom, bc + 1, polynom)
+      _ -> kermit_entry(c >>> 1, bxor(crc >>> 1, polynom), bc + 1, polynom)
     end
   end
-
 end
