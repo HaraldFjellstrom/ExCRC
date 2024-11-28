@@ -4,6 +4,16 @@ defmodule ExCRC do
   """
   import Bitwise
 
+    # poly=0x8005, start=0xffff, check=0x4b37
+  @doc """
+    Compute and return the CRC16/MODBUS-TRUE checksum of a binary _value_.
+  """
+  @spec crc16modbus(value :: binary, crc :: non_neg_integer) :: non_neg_integer
+  def crc16modbus(value, crc \\ 0xFFFF) do
+    import ExCRC.Tables, only: [modbus_table: 0]
+    calc_modbus(:binary.bin_to_list(value), crc, modbus_table())
+  end
+
   # poly=0x1021, start=0xffff, check=0x29b1
   @doc """
     Compute and return the CRC16/CCITT-FALSE checksum of a binary _value_.
@@ -58,4 +68,14 @@ defmodule ExCRC do
     high_byte = (crc &&& 0x00FF) <<< 8
     low_byte ||| high_byte
   end
+
+  # Calculate CRC using modbus table
+  @spec calc_modbus([byte], non_neg_integer, table :: map) :: non_neg_integer
+  defp calc_modbus([x | rem], crc, table) do
+    key = bxor(crc, x) &&& 0xFF
+    crc = bxor(crc >>> 8, table[key])
+    calc_modbus(rem, crc &&& 0xFFFF, table)
+  end
+
+  defp calc_modbus([], crc, _), do: crc
 end

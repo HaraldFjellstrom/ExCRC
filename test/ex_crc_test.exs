@@ -80,4 +80,24 @@ defmodule ExCRCTest do
     assert ExCRC.crc16xmodem("Lammert Bies") == 0xcec8
   end
 
+    # @tag :skip
+    test "crc16modbus/1 computes the CRC of an empty string as 0xFFFF" do
+      assert ExCRC.crc16modbus("") == 0xFFFF
+    end
+
+    # @tag :skip
+    test "crc16modbus/1 computes the CRC of a space as 0x98BE" do
+      assert ExCRC.crc16modbus(" ") == 0x98BE
+    end
+
+    # @tag :skip
+    test "crc16modbus/1 computes the CRC of '123456789' as 0x4B37" do
+      assert ExCRC.crc16modbus("123456789") == 0x4B37
+    end
+
+    # @tag :skip
+    test "crc16modbus/1 computes the CRC of 'Lammert Bies' as 0xCEC8" do
+      assert ExCRC.crc16modbus("Lammert Bies") == 0xB45C
+    end
+
 end
