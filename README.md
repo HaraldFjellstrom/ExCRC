@@ -32,6 +32,7 @@ an integer CRC value computed with a variant of the CRC algorithm:
   * crc16ccitt/1 - CRC16/CCITT
   * crc16xmodem/1 - CRC16/XMODEM
   * crc16kermit/1 - CRC16/KERMIT
+  * crc16modbus/1 - CRC16/MODBUS
 
 ## Installation
 
